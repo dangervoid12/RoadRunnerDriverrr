@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_head_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--Profile image for the chat head.-->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/chat_head_root1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/chat_head_profile_iv"
+            android:layout_width="128dp"
+            android:layout_height="96dp"
+
+            android:src="@drawable/pizzachat" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="128dp"
+        android:layout_height="match_parent"
+        android:id="@+id/chat_head_root2"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+
+    <!--Close button-->
+
+</LinearLayout>
