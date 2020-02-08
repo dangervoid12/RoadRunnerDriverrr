@@ -62,6 +62,7 @@ public class SettingsFragment extends Fragment {
             }
         });
         tvDeliveryContNumber = root.findViewById(R.id.tvNumber);
+        tvDeliveryContNumber.setText(myDataManager.getDeliveryConfirmationNumber());
         chbAutoGetPostcodeFromLoc = root.findViewById(R.id.chbAutoGetPostcodeFromLoc);
         chbAutoGetPostcodeFromLoc.setChecked(myDataManager.getAutoGetPostcodeFromLoc());
         chbAutoGetPostcodeFromLoc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -117,6 +118,7 @@ public class SettingsFragment extends Fragment {
         editor.putBoolean("stickyEdges", myDataManager.getStickyEdges());
         editor.putBoolean("autoGetPostcodeFromLoc", myDataManager.getAutoGetPostcodeFromLoc());
         editor.putBoolean("blackTheme", myDataManager.getBlackTheme());
+        editor.putString("deliveryContNumber", myDataManager.getDeliveryConfirmationNumber());
         editor.apply();
         Toast.makeText(getContext(),"Settings saved",Toast.LENGTH_SHORT);
     }

@@ -1,6 +1,7 @@
 package com.example.roadrunnerdriverrr.ui.address;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.roadrunnerdriverrr.MyDataManager;
 import com.example.roadrunnerdriverrr.PostcodeIOManager;
 import com.example.roadrunnerdriverrr.R;
+import com.example.roadrunnerdriverrr.SingleDelivery;
 
 import java.util.ArrayList;
 
@@ -40,6 +44,8 @@ public class AddressFragment extends Fragment {
     ListView lvDelList;
     ArrayAdapter<String> adapter;
     TextView tvTotal, tvAdrLabel, tvPostcodeLabel, tvTotalLabel;
+    int editPos = -1;
+
     private ArrayList<String> listItem = new ArrayList<String>();
 
 
@@ -187,7 +193,9 @@ public class AddressFragment extends Fragment {
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
         menu.add(0, v.getId(), 0, "Info");
+        menu.add(0,v.getId(),0,"Edit");
         menu.add(0, v.getId(), 0, "Delete");
+
     }
 
     public boolean onContextItemSelected(MenuItem item){
@@ -201,6 +209,11 @@ public class AddressFragment extends Fragment {
         }
         if(item.getTitle() == "Info"){
             createInfoDialog(myDataManager.getDelArr().get(pos).getPostcode());
+        }
+        if(item.getTitle() == "Edit"){
+            editPos = pos;
+            createEditDialog(myDataManager.getDelArr().get(pos));
+
         }
         return true;
     }
@@ -224,6 +237,59 @@ public class AddressFragment extends Fragment {
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void createEditDialog(final SingleDelivery editDelivery) {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.layout_edit_dialog);
+        dialog.setTitle("Edit");
+        final EditText etAddressEdit = (EditText) dialog.findViewById(R.id.etAddressEdit);
+        etAddressEdit.setText(editDelivery.getAddress());
+        final EditText etPostcodeEdit = (EditText) dialog.findViewById(R.id.etPostcodeEdit);
+        etPostcodeEdit.setText(editDelivery.getPostcode());
+        final CheckBox chbIsDelivered = (CheckBox) dialog.findViewById(R.id.chbIsDelivered);
+        chbIsDelivered.setChecked(editDelivery.getStatusDelivered());
+        final EditText etDeliveryDate = (EditText) dialog.findViewById(R.id.etDeliveryDate);
+        etDeliveryDate.setText(editDelivery.getDateOfDelivery());
+        if(chbIsDelivered.isChecked()){
+            etDeliveryDate.setEnabled(true);
+        }else {
+            etDeliveryDate.setEnabled(false);
+        }
+        chbIsDelivered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                etDeliveryDate.setEnabled(isChecked);
+            }
+        });
+        Button bSaveEdit = (Button) dialog.findViewById(R.id.bSaveEdit);
+        bSaveEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDelivery.setAddress(etAddressEdit.getText().toString());
+                editDelivery.setPostcode(etPostcodeEdit.getText().toString());
+                if(chbIsDelivered.isChecked()){
+                    editDelivery.setDateOfDelivery(etDeliveryDate.getText().toString());
+                }else {
+                    editDelivery.flipStatusDelivered();
+                }
+                myDataManager.getDelArr().set(editPos,editDelivery);
+                loadAllDel();
+                dialog.dismiss();
+            }
+        });
+
+        Button bCancelEdit = (Button) dialog.findViewById(R.id.bCancelEdit);
+        bCancelEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+
     }
 
     private void loadAllDel(){
