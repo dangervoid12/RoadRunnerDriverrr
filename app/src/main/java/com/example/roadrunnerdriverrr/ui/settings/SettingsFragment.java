@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -43,8 +43,8 @@ public class SettingsFragment extends Fragment {
         tv1 = root.findViewById(R.id.tv1);
         tvNumberName = root.findViewById(R.id.tvNumberName);
         tvNumber = root.findViewById(R.id.tvNumber);
+        myDataManager.getDeliveryConfirmationNumber();
         chbStickyEdges = root.findViewById(R.id.chbStickyEdges);
-        Log.v("zz","st:" + myDataManager.getStickyEdges());
         chbStickyEdges.setChecked(myDataManager.getStickyEdges());
 
         chbStickyEdges.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -61,7 +61,7 @@ public class SettingsFragment extends Fragment {
                 selDelContact();
             }
         });
-       tvDeliveryContNumber = root.findViewById(R.id.tvNumber);
+        tvDeliveryContNumber = root.findViewById(R.id.tvNumber);
         chbAutoGetPostcodeFromLoc = root.findViewById(R.id.chbAutoGetPostcodeFromLoc);
         chbAutoGetPostcodeFromLoc.setChecked(myDataManager.getAutoGetPostcodeFromLoc());
         chbAutoGetPostcodeFromLoc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -109,7 +109,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        Log.v("aa","vvvv");
     }
 
     private void saveData(){
@@ -119,6 +118,7 @@ public class SettingsFragment extends Fragment {
         editor.putBoolean("autoGetPostcodeFromLoc", myDataManager.getAutoGetPostcodeFromLoc());
         editor.putBoolean("blackTheme", myDataManager.getBlackTheme());
         editor.apply();
+        Toast.makeText(getContext(),"Settings saved",Toast.LENGTH_SHORT);
     }
 
     private void selDelContact(){
@@ -140,8 +140,6 @@ public class SettingsFragment extends Fragment {
                         if(cur.moveToNext()) {
                             String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                             String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                            Log.e("Names", name);
-
                             if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0)
                             {
 

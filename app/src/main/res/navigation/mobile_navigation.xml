@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_address"
+        android:name="com.example.roadrunnerdriverrr.ui.address.AddressFragment"
+        android:label="@string/title_address"
+        tools:layout="@layout/fragment_address" />
+
+    <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.roadrunnerdriverrr.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"

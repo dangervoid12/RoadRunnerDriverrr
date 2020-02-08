@@ -23,23 +23,20 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 
 import java.util.Random;
 
 public class ChatHeadService extends Service {
     ChatHeadService me = this;
     private NotificationManager mNM;
+    private PostcodeIOManager postcodeIOManager;
     private String notificationChannelId= "mynotification";
     private String notificationChannelName = "mynotification";
 
@@ -169,7 +166,6 @@ public class ChatHeadService extends Service {
                         return true;
                     case MotionEvent.ACTION_UP:
                         if (lastAction == MotionEvent.ACTION_DOWN) {
-                            Log.v("lastAction","down");
                         }
                         lastAction = event.getAction();
                         float resX = initialX - params.x;
@@ -257,7 +253,8 @@ public class ChatHeadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        return START_NOT_STICKY;
+        //return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void createOpenMenu(){
@@ -296,23 +293,10 @@ public class ChatHeadService extends Service {
         ibA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if(addPostcodeSwitch){
-                    if(etPostcode.getText().toString().equals("")){
-
-                    }else {
-                        myDataManager.addPostcodeString(etPostcode.getText().toString());
-                    }
-                    hideAddPostcodeAlert();
-
-                }else {
-                    showAddPostcodeAlert();
-                    //popUpEditText();
-                }
-                addPostcodeSwitch = !addPostcodeSwitch;*/
-                //myDataManager.addPostcodeFromCurLoc();
                 Toast.makeText(getApplicationContext(), "Current Postcode: " + myDataManager.getCurPostcode(), Toast.LENGTH_LONG).show();
                 if(myDataManager.getAutoGetPostcodeFromLoc()){
-                    myDataManager.addPostcodeString(myDataManager.getCurPostcode());
+                    //myDataManager.addPostcodeString(myDataManager.getCurPostcode());
+                    myDataManager.addDelivery(myDataManager.getCurAddress(), myDataManager.getCurPostcode(),true);
                 }else {
                     Intent dialogIntent = new Intent(me, MainActivity.class);
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -447,7 +431,6 @@ public class ChatHeadService extends Service {
     }
 
     private void hideAddPostcodeAlert(){
-        Log.v("aaa","bb:" + etPostcode.getText().toString());
         try {
             mWindowManager.removeView(addPostcodeLayout);
 
