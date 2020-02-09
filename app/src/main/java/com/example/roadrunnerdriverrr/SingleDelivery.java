@@ -76,7 +76,7 @@ public class SingleDelivery {
 
     private String getCurDate(){
         String result = "";
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
         LocalDateTime now = LocalDateTime.now();
         result = dtf.format(now);
         return result;

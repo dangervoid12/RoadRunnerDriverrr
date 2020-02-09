@@ -140,7 +140,8 @@ public class MyDataManager {
         newDel.setCurDateAsDelDate();
         newDel.flipStatusDelivered();
         deliveryArr.add(newDel);
-
+        addToTotal(newDel.getReward());
+        Log.v("aa","tot:" + getTotal());
         //addToTotal(newDel.getReward()); //better to have control somewhere else
     }
 
