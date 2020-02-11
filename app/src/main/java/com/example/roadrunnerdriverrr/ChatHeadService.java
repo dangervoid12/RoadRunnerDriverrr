@@ -36,6 +36,8 @@ import java.util.Random;
 public class ChatHeadService extends Service {
     ChatHeadService me = this;
     private NotificationManager mNM;
+    Notification notification;
+
     private PostcodeIOManager postcodeIOManager;
     private String notificationChannelId= "mynotification";
     private String notificationChannelName = "mynotification";
@@ -293,7 +295,7 @@ public class ChatHeadService extends Service {
         ibA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Current Postcode: " + myDataManager.getCurPostcode(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Current Postcode: " + myDataManager.getCurPostcode(), Toast.LENGTH_SHORT).show();
                 if(myDataManager.getAutoGetPostcodeFromLoc()){
                     //myDataManager.addPostcodeString(myDataManager.getCurPostcode());
                     myDataManager.addDelivery(myDataManager.getCurAddress(), myDataManager.getCurPostcode(),true);
@@ -495,7 +497,7 @@ public class ChatHeadService extends Service {
                 new Intent(this, MainActivity.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        Notification notification = new Notification.Builder(this)
+        notification = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.pizzachat)  // the status icon
                 .setTicker(text)  // the status text
                 .setWhen(System.currentTimeMillis())  // the time stamp
@@ -506,7 +508,8 @@ public class ChatHeadService extends Service {
                 .build();
 
         // Send the notification.
-        mNM.notify(1, notification);
+        //mNM.notify(1, notification);
+        startForeground(1337, notification);
     }
 
     private void updateNotification(){

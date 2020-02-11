@@ -1,20 +1,27 @@
 package com.example.roadrunnerdriverrr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.View;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class MyDataManager {
     static Context appContext;
@@ -38,7 +45,6 @@ public class MyDataManager {
 
     static float total;
     static float totalNo;
-    static ArrayList<String> postcodeArr = new ArrayList<String>();
     static ArrayList<SingleDelivery> deliveryArr = new ArrayList<SingleDelivery>();
     static String listItem = "";
     static boolean widgetPerm = false;
@@ -97,37 +103,15 @@ public class MyDataManager {
     }
     public void setAutoGetPostcodeFromLoc(boolean i){ autoGetPostcodeFromLoc = i;}
     public boolean getAutoGetPostcodeFromLoc(){ return autoGetPostcodeFromLoc;}
-    public String getListItem(){
-        String result = "";
-        int i = 0;
-        while (i<postcodeArr.size()){
-            result = result + (i+1) + ". " + postcodeArr.get(i) + " \n";
-            i++;
-        }
-        return result;
-    }
+
     public void setListItem(String i){ listItem = i;}
-
-
-    public void addPostcode(String i){
-        postcodeArr.add(i);
-    }
-    public void takePostcode(int pcNo){
-        postcodeArr.remove(pcNo);
-    }
-    public String getPostcodeNo(int pcNo){
-        return postcodeArr.get(pcNo);
-    }
-    public ArrayList<String> getPostcodeArr(){
-        return postcodeArr;
-    }
 
     public void addDelivery(SingleDelivery newDel){ deliveryArr.add(newDel);}
 
     public void addDelivery(String address, String postcode){
         Log.v("aa","a:" + address + " p:" + postcode);
 
-            SingleDelivery newDel = new SingleDelivery(address, postcode);
+            SingleDelivery newDel = new SingleDelivery(deliveryArr.size() + 1, address, postcode);
             deliveryArr.add(newDel);
 
         //addToTotal(newDel.getReward()); //better to have control somewhere else
@@ -136,7 +120,7 @@ public class MyDataManager {
     public void addDelivery(String address, String postcode, boolean isDelivered){
         Log.v("aa","a:" + address + " p:" + postcode);
 
-        SingleDelivery newDel = new SingleDelivery(address, postcode);
+        SingleDelivery newDel = new SingleDelivery(deliveryArr.size()+1, address, postcode);
         newDel.setCurDateAsDelDate();
         newDel.flipStatusDelivered();
         deliveryArr.add(newDel);
@@ -179,81 +163,6 @@ public class MyDataManager {
         return result;
     }
 
-    public void addPostcodeString(String newPostcode){
-        totalNo++;
-
-        if(!newPostcode.contains("GL")){
-
-            listItem = "GL" + newPostcode;
-            newPostcode = listItem;
-        }else {
-            listItem = newPostcode;
-        }
-
-        float tmpTotal = getTotal();
-        newPostcode = newPostcode.replaceAll("\\s",""); // to delete spaces
-
-        int pc1 = Integer.parseInt(newPostcode.substring(2,3));
-        int pc2 = Integer.parseInt(newPostcode.substring(3,4));
-        if(pc1 == 1){
-            //all just for pound
-            //total++;
-            addToTotal(1.0f);
-        }else if(pc1 == 2){
-            if(pc2 == 0){
-                addToTotal(1.0f); // 1f
-            }else if(pc2 == 2){
-                addToTotal(2.0f);
-            }else if(pc2 == 4){
-                addToTotal(2.0f);
-            }else if(pc2 == 5){
-                addToTotal(1.0f);
-            }else if(pc2 == 8){
-                addToTotal(2.0f);
-            }
-        }else if(pc1 == 3){
-            if(pc2 == 1){
-                addToTotal(1.5f);
-            }else if(pc2 == 3){
-                addToTotal(1.5f);
-            }else if(pc2 == 4){
-                addToTotal(2.0f);
-            }
-        }else if(pc1 == 4){
-            if(pc2 == 0){
-                addToTotal(1.5f);
-            }else if(pc2 == 3){
-                addToTotal(1.5f);
-            }else if(pc2 == 4){
-                addToTotal(1.5f);
-            }else if(pc2 == 5){
-                addToTotal(1.5f);
-            }else if(pc2 == 6){
-                addToTotal(1.5f);
-            }else if(pc2 == 8){
-                addToTotal(2.0f);
-            }
-
-        }
-        if(getTotal() != tmpTotal){
-            //listItem = listItem + "    " + (getTotal() - tmpTotal);
-            //tvList.append(listItem);
-            lastAdd = getTotal() - tmpTotal;
-            addPostcode(newPostcode);
-        }
-    }
-
-    public void deleteLast(){
-        postcodeArr.remove(postcodeArr.size()-1);
-        takeFromTotal(lastAdd);
-    }
-
-    public void clearList(){
-        totalNo = 0;
-        total = 0;
-        postcodeArr = null;
-        postcodeArr = new ArrayList<String>();
-    }
 
     public static float getRewardFromPostcode(String newPostcode){
         float result = 0f;
@@ -341,7 +250,42 @@ public class MyDataManager {
         return result;
     }
 
+    public Context getAppContext(){
+        return appContext;
+    }
 
+    private void writeFileContent(Uri uri, String textContent)
+    {
+        try{
+            ParcelFileDescriptor pfd =
+                    this.getAppContext().getContentResolver().
+                            openFileDescriptor(uri, "w");
+
+            FileOutputStream fileOutputStream =
+                    new FileOutputStream(
+                            pfd.getFileDescriptor());
+
+
+            fileOutputStream.write(textContent.getBytes());
+
+            fileOutputStream.close();
+            pfd.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public String getCurDate(){
+        String result = "";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy.MM.dd");
+        LocalDateTime now = LocalDateTime.now();
+        result = dtf.format(now);
+        return result;
+    }
 
 
     public void updateCurLoc(){

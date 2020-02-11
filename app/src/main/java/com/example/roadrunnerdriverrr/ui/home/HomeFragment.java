@@ -57,6 +57,6 @@ public class HomeFragment extends Fragment {
 
     private void startChatHead(){
         Intent chatIntent = new Intent(getActivity(), ChatHeadService.class);
-        getActivity().startService(chatIntent);
+        getActivity().startForegroundService(chatIntent);
     }
 }

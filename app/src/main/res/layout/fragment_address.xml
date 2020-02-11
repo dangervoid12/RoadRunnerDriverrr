@@ -38,6 +38,16 @@
 
             android:background="@android:drawable/toast_frame"
             android:text="Clear" />
+
+        <Button
+            android:id="@+id/bSaveLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@android:drawable/toast_frame"
+            android:text="Save" />
     </LinearLayout>
 
     <LinearLayout

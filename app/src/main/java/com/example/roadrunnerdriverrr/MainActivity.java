@@ -30,17 +30,14 @@ public class MainActivity extends AppCompatActivity {
     MyDataManager myDataManager;
     private ConstraintLayout container;
 
-    static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
-    static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 2;
-    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
-    static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 4;
-
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.SEND_SMS,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
     };
 
     boolean permissionMarker = false;
@@ -127,31 +124,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        if(requestCode == MY_PERMISSIONS_REQUEST_READ_CONTACTS){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-            } else {
-                Toast.makeText(this.getApplicationContext(),"You need to accept permissions!!!",Toast.LENGTH_LONG);
-            }
-        }else if(requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            } else {
-                Toast.makeText(this.getApplicationContext(),"You need to accept permissions!!!",Toast.LENGTH_LONG);
-            }
-        }else if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                permissionMarker = true;
-            } else {
-                Toast.makeText(this.getApplicationContext(),"You need to accept permissions!!!",Toast.LENGTH_LONG);
-            }
-        }else if(requestCode == MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                permissionMarker = true;
-            } else {
-                Toast.makeText(this.getApplicationContext(),"You need to accept permissions!!!",Toast.LENGTH_LONG);
-            }
-        }
 
     }
 
